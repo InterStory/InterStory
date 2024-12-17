@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
-import com.app.interstory.novel.domain.entity.Tag;
 
 @Repository
 public interface EpisodeRepository extends JpaRepository<Episode, Long>, EpisodeRepositoryCustom {
@@ -64,4 +63,8 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long>, Episode
 	);
 
 	List<Episode> findByNovel(Novel novel);
+
+	Page<Episode> findAllByOrderByPublishedAtAsc(Pageable pageable);
+
+	Page<Episode> findAllByOrderByPublishedAtDesc(Pageable pageable);
 }

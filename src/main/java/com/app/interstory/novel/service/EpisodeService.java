@@ -47,7 +47,9 @@ public class EpisodeService {
 
 	// 회차 작성
 	@Transactional
-	public EpisodeResponseDTO writeEpisode(Long novelId, EpisodeRequestDTO requestDTO) {
+	public EpisodeResponseDTO writeEpisode(EpisodeRequestDTO requestDTO) {
+		Long novelId = requestDTO.getNovelId();
+
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
@@ -73,27 +75,18 @@ public class EpisodeService {
 
 	// 회차 수정
 	@Transactional
-	public EpisodeResponseDTO updateEpisode(Long novelId, Long episodeId, EpisodeRequestDTO requestDTO) {
+	public EpisodeResponseDTO updateEpisode(Long episodeId, EpisodeRequestDTO requestDTO) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new IllegalArgumentException("Invalid novelId for the given episode.");
-		}
-
 		episode.updateEpisode(requestDTO);
-
 		return convertToDTO(episode);
 	}
 
 	// 회차 상세 조회
-	public EpisodeResponseDTO readEpisode(Long novelId, Long episodeId) {
+	public EpisodeResponseDTO readEpisode(Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
 
 		return convertToDTO(episode);
 	}
@@ -114,38 +107,26 @@ public class EpisodeService {
 
 	// 회차 삭제
 	@Transactional
-	public void deleteEpisode(Long novelId, Long episodeId) {
+	public void deleteEpisode(Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
 
 		episode.markAsDeleted();
 	}
 
 	// 회차 구매
 	@Transactional
-	public void purchaseEpisode(Long userId, Long novelId, Long episodeId) {
-		// 1. 사용자 조회
+	public void purchaseEpisode(Long userId, Long episodeId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
-		// 2. 에피소드 조회 및 검증
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Invalid novel ID for the given episode.");
-		}
-
 		Long episodePrice = 5L;
 
-		// 4. 포인트 차감
 		user.reducePointsForPurchase(episodePrice);
 
-		// 5. 포인트 사용 내역 저장
 		Point point = Point.builder()
 			.user(user)
 			.balance(-episodePrice)
@@ -203,24 +184,25 @@ public class EpisodeService {
 		return afterLikeMessage;
 	}
 
-	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort, Pageable pageable, boolean showAll) {
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, SortType sort,
+		Pageable pageable, boolean showAll) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Page<Episode> episodes;
 		if (sort == SortType.OLD_TO_NEW) {
-			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
+			episodes = episodeRepository.findAllByOrderByPublishedAtAsc(pageable);
 		} else {
-			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
+			episodes = episodeRepository.findAllByOrderByPublishedAtDesc(pageable);
 		}
 
 		List<NovelEpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
 			.map(episode -> {
 				Long episodeId = episode.getEpisodeId();
-				boolean isFree = novelRepository.findById(novelId).orElseThrow(() -> new RuntimeException("Novel not found")).getIsFree();
+				boolean isFree = episode.getNovel().getIsFree();
 
 				return NovelEpisodeResponseDTO.builder()
 					.episodeId(episodeId)
-					.novelId(novelId)
+					.novelId(episode.getNovel().getNovelId())
 					.title(episode.getTitle())
 					.viewCount(episode.getViewCount())
 					.publishedAt(episode.getPublishedAt())
@@ -245,11 +227,9 @@ public class EpisodeService {
 	}
 
 	//회차 목록
-	public Page<EpisodeResponseDTO> getEpisodesByNovelId(Long novelId, int page, Sort.Direction direction) {
-
+	public Page<EpisodeResponseDTO> getEpisodesByPage(int page, Sort.Direction direction) {
 		PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(direction, "episodeId"));
-
-		Page<Episode> episodePage = episodeRepository.getEpisodeList(novelId, pageRequest);
+		Page<Episode> episodePage = episodeRepository.findAll(pageRequest);
 
 		return new PageImpl<>(
 			episodePage.getContent().stream()

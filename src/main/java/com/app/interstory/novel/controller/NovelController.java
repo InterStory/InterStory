@@ -50,7 +50,7 @@ public class NovelController {
 		model.addAttribute("novel", novel);
 		model.addAttribute("isAuthor", userId.equals(novel.getAuthorId()));
 		model.addAttribute("author", nickname);
-		model.addAttribute("episodes", episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll));
+		model.addAttribute("episodes", episodeService.getEpisodeList(userDetails, sort, pageable, showAll));
 		model.addAttribute("comments", commentService.getNovelComment(novelId, commentSort, commentPage, userDetails));
 
 		return "novel/novel";
