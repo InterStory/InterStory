@@ -109,10 +109,12 @@ public class MypageController {
 
 	// 보유 쿠폰 페이지
 	@GetMapping("/my-coupons")
-	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable,
-		Model model) {
-		Page<UserCouponResponseDTO> coupons = mypageService.getCoupons(userDetails, pageable);
-		model.addAttribute("coupons", coupons.getContent());
+	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+		if (userDetails == null) {
+			throw new IllegalStateException("사용자 인증 정보가 없습니다.");
+		}
+		Page<UserCouponResponseDTO> coupons = mypageService.getCoupons(userDetails, PageRequest.of(0, 10));
+		model.addAttribute("coupons", coupons);
 		return "mypage/my-coupons";
 	}
 

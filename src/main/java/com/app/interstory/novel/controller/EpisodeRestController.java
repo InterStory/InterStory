@@ -29,10 +29,9 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("api/novels/{novelId}/episodes")
+@RequestMapping("api/novels/episodes/{episodeId}")
 @RequiredArgsConstructor
 public class EpisodeRestController {
-
 	private final EpisodeService episodeService;
 
 	// 회차 작성
@@ -44,7 +43,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 수정
-	@PutMapping("/{episodeId}")
+	@PutMapping
 	public ResponseEntity<EpisodeResponseDTO> updateEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
@@ -54,7 +53,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 상세 조회
-	@GetMapping("/{episodeId}")
+	@GetMapping
 	public ResponseEntity<EpisodeResponseDTO> readEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId) {
@@ -63,7 +62,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 삭제
-	@DeleteMapping("/{episodeId}")
+	@DeleteMapping
 	public ResponseEntity<String> deleteEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId) {
@@ -72,7 +71,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 구매
-	@PostMapping("/{episodeId}/purchase")
+	@PostMapping("/purchase")
 	public ResponseEntity<String> purchaseEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
@@ -95,7 +94,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 추천
-	@PostMapping("/{episodeId}/like")
+	@PostMapping("/like")
 	public ResponseEntity<String> likeEpisode(
 		@PathVariable Long episodeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails
@@ -120,12 +119,13 @@ public class EpisodeRestController {
 
 		Pageable pageable = PageRequest.of(page, pageSize);
 
-		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
+		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable,
+			showAll);
 
 		return ResponseEntity.ok(responseDTO);
 	}
 
-	//에피소드 목록 갖고오기
+	// 에피소드 목록 갖고오기
 	@GetMapping
 	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
 		@PathVariable Long novelId,
