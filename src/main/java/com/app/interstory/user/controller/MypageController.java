@@ -29,7 +29,9 @@ import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
+import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
+import com.app.interstory.user.dto.response.UserProfileDTO;
 import com.app.interstory.user.service.MypageService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +48,18 @@ public class MypageController {
 	@GetMapping("/profile")
 	public String getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		MypageResponseDTO userProfile = mypageService.getUser(userDetails);
-		model.addAttribute("userProfile", userProfile);
+
+		// 포인트 및 구독 정보 가져오기
+		int pointBalance = mypageService.getUserPoint(userDetails);
+		SubscriptionResponseDTO subscription = mypageService.getSubscription(userDetails);
+
+		UserProfileDTO profileDTO = UserProfileDTO.builder()
+			.nickname(userProfile.getNickname())
+			.point(pointBalance)
+			.subscriptionEndAt(subscription != null ? subscription.getEndAt() : null)
+			.build();
+
+		model.addAttribute("profileDTO", profileDTO);
 		return "mypage/my-profile";
 	}
 
@@ -60,22 +73,20 @@ public class MypageController {
 	}
 
 	// 열람 작품 페이지
-	@GetMapping("/recent-novels")
+	@GetMapping("/users/recent-novels")
 	public String getRecentNovels(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
-		@PageableDefault(size = 10) Pageable pageable,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size,
 		Model model) {
+		Sort sortOrder = mapSort(sort);
+		Pageable pageable = PageRequest.of(page, size, sortOrder);
+		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(userDetails, pageable);
 
-		Pageable sortedPageable = PageRequest.of(
-			pageable.getPageNumber(),
-			pageable.getPageSize(),
-			mapSort(sort)
-		);
-
-		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(userDetails, sortedPageable);
-		model.addAttribute("recentNovels", recentNovels);
+		model.addAttribute("recentNovels", recentNovels.getContent());
 		model.addAttribute("currentSort", sort);
-
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", recentNovels.getTotalPages());
 		return "mypage/recent-novel";
 	}
 
@@ -86,9 +97,7 @@ public class MypageController {
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "10") int size,
 		Model model) {
-
 		Pageable pageable = PageRequest.of(page - 1, size);
-
 		Page<PointHistoryResponseDTO> pointHistoryPage = mypageService.getPointHistory(userDetails, pageable);
 
 		model.addAttribute("pointHistoryList", pointHistoryPage.getContent());

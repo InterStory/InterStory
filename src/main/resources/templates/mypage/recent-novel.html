@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Recent Novels</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* 헤더 스타일 */
         .header {
@@ -146,10 +147,43 @@
         }
 
         h2 {
+            font-weight: bold;
             margin-top: 40px;
             font-size: 20px;
             color: #333;
             text-align: left;
+        }
+
+        /*Sort*/
+        .sort-options {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-right: 1rem;
+        }
+
+        .sort-options label {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .sort-options select {
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .sort-options select:hover,
+        .sort-options select:focus {
+            border-color: #888;
         }
 
         .recent-novel {
@@ -269,6 +303,13 @@
         </div>
     </div>
     <h2>열람 작품</h2>
+    <div class="sort-options">
+        <select id="sort" onchange="changeSort(this.value)">
+            <option th:selected="${currentSort.name() == 'NEW_TO_OLD'}" value="NEW_TO_OLD">최신순</option>
+            <option th:selected="${currentSort.name() == 'OLD_TO_NEW'}" value="OLD_TO_NEW">오래된순</option>
+            <option th:selected="${currentSort.name() == 'RECOMMENDATION'}" value="RECOMMENDATION">추천순</option>
+        </select>
+    </div>
     <div class="recent-novel">
         <!-- 열람 작품 리스트 -->
         <div th:if="${not #lists.isEmpty(recentNovels)}">
@@ -297,11 +338,42 @@
             </div>
         </div>
     </div>
-
     <!-- 열람 작품이 없을 경우 -->
     <div class="no-novels" th:if="${#lists.isEmpty(recentNovels)}">
         열람한 작품이 없습니다.
     </div>
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                <a class="page-link" href="#" th:onclick="|goToPage(${currentPage - 1})|">&laquo;</a>
+            </li>
+            <li class="page-item" th:classappend="${i == currentPage} ? 'active' : ''"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a class="page-link" href="#" th:onclick="|goToPage(${i})|" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                <a class="page-link" href="#" th:onclick="|goToPage(${currentPage + 1})|">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
 </main>
+<script>
+    // 정렬 옵션 변경 시 새로고침
+    function changeSort(sortValue) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("sort", sortValue);
+        params.set("page", 0); // 정렬 변경 시 첫 페이지로 이동
+        window.location.search = params.toString();
+    }
+
+    // 페이지 이동 처리
+    function goToPage(page) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("page", page);
+        window.location.search = params.toString();
+    }
+</script>
+
 </body>
 </html>

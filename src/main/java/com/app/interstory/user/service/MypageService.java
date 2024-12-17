@@ -142,6 +142,16 @@ public class MypageService {
 		});
 	}
 
+	@Transactional
+	public void deleteFavoriteNovel(CustomUserDetails userDetails, Long novelId) {
+		Long userId = userDetails.getUser().getUserId();
+
+		FavoriteNovel favoriteNovel = favoriteNovelRepository.findByUser_UserIdAndNovel_NovelId(userId, novelId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 작품이 관심 목록에 없습니다."));
+
+		favoriteNovelRepository.delete(favoriteNovel);
+	}
+
 	public Page<ReadNovelResponseDTO> getReadNovels(CustomUserDetails userDetails, Pageable pageable) {
 		Long userId = userDetails.getUser().getUserId();
 
@@ -211,6 +221,15 @@ public class MypageService {
 				.thumbnailUrl(myNovel.getThumbnailUrl())
 				.build();
 		});
+	}
+
+	public int getUserPoint(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		return pointRepository.findFirstByUser_UserIdOrderByUsedAtDesc(userId)
+			.map(Point::getBalance)
+			.orElse(0L)
+			.intValue();
 	}
 
 	public SettlementResponseDTO getSettlement(CustomUserDetails userDetails) {
@@ -321,7 +340,7 @@ public class MypageService {
 		Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
 
 		return SubscriptionResponseDTO.builder()
-			.endAt(subscribe.getEndAt())
+			.endAt(subscribe != null ? subscribe.getEndAt() : null) // subscribe가 null이면 null 반환
 			.build();
 	}
 }

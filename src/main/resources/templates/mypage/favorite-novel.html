@@ -147,10 +147,43 @@
         }
 
         h2 {
+            font-weight: bold;
             margin-top: 40px;
             font-size: 20px;
             color: #333;
             text-align: left;
+        }
+
+        /*Sort*/
+        .sort-options {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-right: 1rem;
+        }
+
+        .sort-options label {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .sort-options select {
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .sort-options select:hover,
+        .sort-options select:focus {
+            border-color: #888;
         }
 
         .favorite-novel {
@@ -275,6 +308,13 @@
         </div>
     </div>
     <h2>관심 작품</h2>
+    <div class="sort-options">
+        <select id="sort" onchange="changeSort(this.value)">
+            <option th:selected="${currentSort.name() == 'NEW_TO_OLD'}" value="NEW_TO_OLD">최신순</option>
+            <option th:selected="${currentSort.name() == 'OLD_TO_NEW'}" value="OLD_TO_NEW">오래된순</option>
+            <option th:selected="${currentSort.name() == 'RECOMMENDATION'}" value="RECOMMENDATION">추천순</option>
+        </select>
+    </div>
     <div class="favorite-novel">
         <!-- 관심 작품 리스트 -->
         <div th:if="${favoriteNovels.content.size() > 0}">
@@ -323,12 +363,19 @@
     </nav>
 </main>
 <script>
+    function changeSort(sortValue) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("sort", sortValue);
+        params.set("page", 0); // 정렬 변경 시 첫 페이지로 이동
+        window.location.search = params.toString();
+    }
+
     function deleteFavoriteNovel(novelId) {
         if (!confirm("정말로 이 작품을 관심 목록에서 삭제하시겠습니까?")) {
             return;
         }
 
-        fetch(`/api/favorite-novels/${novelId}`, {
+        fetch(`/api/users/favorite-novels/${novelId}`, {  // URL 변경
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'}
         })
