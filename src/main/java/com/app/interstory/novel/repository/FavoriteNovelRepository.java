@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 
+import java.util.List;
+
 @Repository
 public interface FavoriteNovelRepository extends JpaRepository<FavoriteNovel, Long> {
 	@Query("""
@@ -25,6 +27,7 @@ public interface FavoriteNovelRepository extends JpaRepository<FavoriteNovel, Lo
 		""")
 	Page<FavoriteNovel> findFavoritesSortedByLatestEpisode(@Param("userId") Long userId, Pageable pageable);
 
+    List<FavoriteNovel> findByUser(User user);
 	Boolean existsByUser_UserId(Long userId);
 
 	@Modifying
