@@ -8,16 +8,17 @@
 - [1.프로젝트 목표](#1-프로젝트-목표)
 - [2.개발 환경 및 개발 일정](#2-개발-환경-및-개발-일정)
 - [3.화면 설계서](#3-화면-설계서)
-- [4.시스템 구조도](#4-시스템-구조도)
-- [5.ERD](#5-ERD)
-- [6.기능 명세서](#6-기능-명세서)
-- [7.API 명세서](#7-api-명세서)
+- [4.ERD](#4-ERD)
+- [5.기능 명세서](#5-기능-명세서)
+- [6.API 명세서](#6-api-명세서)
 
 </div>
 
 ## 0. 프로젝트 소개
 
 ### 작가와 독자가 함께 만들어가는 이야기
+
+[InterStory 배포 URL](http://43.200.10.182:8080/)
 
 Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 반응형 소설 플랫폼입니다.
 
@@ -105,11 +106,31 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 - 테스트 : 2024.12.13. ~ 2024.12.19.
 - 발표 준비 : 2024.12.19.
 
-<br>
+### 흐름도
+
+```mermaid
+
+graph LR
+    Git[GitHub] -->|1 . Push| Actions[GitHub Actions]
+    Actions -->|2 . Build된 파일 전달/저장| S3[AWS S3]
+    Actions -->|3 . 배포 요청| CodeDeploy[AWS CodeDeploy]
+    S3 -->|4 . Build된 파일 전달| CodeDeploy
+    CodeDeploy -->|5 . 배포| EC2[AWS EC2]
+
+    subgraph AWS EC2 Instance
+        EC2 -->|scripts/deploy . sh| Spring[Spring Boot App]
+        EC2 -->|appspec . yml| Config[Configuration]
+        Spring --> Redis[(Redis Docker)]
+        Spring --> RDS[(AWS RDS MySQL)]
+    end
+
+```
 
 ## 3. 화면 설계서
 
 [InterStory 화면 설계(figma)](https://www.figma.com/design/mXSWpX1p48UCLlsu02EcRi/%ED%99%94%EB%A9%B4-%EC%84%A4%EA%B3%84%EC%84%9C?node-id=0-1&t=YCbEi94CdYIUqlmr-1)
+
+<img alt="화면 설계서" src="https://github.com/user-attachments/assets/a88398f7-d653-4ca2-b383-6948ef12db70">
 
 |                                                                                                              |                                                                                                                 |
 |--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
@@ -136,19 +157,16 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 | **회차 작성 (소설)** |                      |
 | <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> |    
 
-## 4. 시스템 구조도
-
-![image](https://github.com/user-attachments/assets/409ef510-c3ca-47b5-bb63-55e40d434f8f)
 
 <br>
 
-## 5. ERD
+## 4. ERD
 
 ![image](https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9)
 
 <br>
 
-## 6. 기능 명세서
+## 5. 기능 명세서
 
 | **기능**          | **상세 기능**            | **설명**                                                       |
 |-----------------|----------------------|--------------------------------------------------------------|
@@ -184,7 +202,7 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 
 <br>
 
-## 7. API 명세서
+## 6. API 명세서
 
 ### **회원관리 API /api/auth**
 
@@ -293,4 +311,9 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 |------------------------|---------|-------------------------------|----------------------------|
 | **getNovelSuggestion** | GET     | `/{userId}/novels/suggestion` | AI를 사용한 추천                 |
 | **getEpisodeReaction** | POST    | `/ai/{episodeId}/reaction`    | 회차별 댓글 분석 (댓글 5개 이상 사용 가능) |
+
+
+
+
+
 
