@@ -141,9 +141,16 @@ graph LR
 | **회차 구매**                                                                                   | **공지사항**                                                                                    | 
 | <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
 | **AI 독자 반응분석**                                                                                   | **소셜 로그인**                                                                                    | 
-| <img src="https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9"> | <img src="https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9"> |
+| <img src="https://github.com/user-attachments/assets/48e5c8e4-3aa9-4d75-9834-c2c6c0652068"> | <img src="https://github.com/user-attachments/assets/d6d343b9-848b-40f7-b979-5250c4c630a2"> |
 
 <br>
+
+
+
+![ai-reaction-demo](https://github.com/user-attachments/assets/48e5c8e4-3aa9-4d75-9834-c2c6c0652068)
+![kakao-login-demo](https://github.com/user-attachments/assets/d6d343b9-848b-40f7-b979-5250c4c630a2)
+
+
 
 
 ## 4. ERD
@@ -157,6 +164,7 @@ graph LR
 <br>
 
 
+![ai-reaction-demo](https://github.com/user-attachments/assets/1bd2fd73-dbdb-4422-89a6-56e90e1d174d)
 
 ## 5. 기능 명세서
 
