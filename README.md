@@ -141,7 +141,7 @@ graph LR
 | **회차 구매**                                                                                   | **공지사항**                                                                                    | 
 | <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
 | **AI 독자 반응분석**                                                                                   | **소셜 로그인**                                                                                    | 
-| <img src=""> | <img src=""> |
+| <img src="https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9"> | <img src="https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9"> |
 
 <br>
 
@@ -155,8 +155,6 @@ graph LR
 
 <br>
 
-
-https://github.com/user-attachments/assets/e5aff6ed-c141-4cb2-93bc-a05c9f4f6916
 
 
 ## 5. 기능 명세서
