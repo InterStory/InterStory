@@ -140,6 +140,8 @@ graph LR
 | <img src="https://github.com/user-attachments/assets/413dea56-413f-4725-a38a-396bfe940ca3"> | <img src="https://github.com/user-attachments/assets/1b7c54d1-38ce-430c-9a1b-5e5db655d5c0"> |
 | **회차 구매**                                                                                   | **공지사항**                                                                                    | 
 | <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
+| **AI 독자 반응분석**                                                                                   | **소셜 로그인**                                                                                    | 
+| <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
 
 <br>
 
